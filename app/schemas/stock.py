@@ -8,7 +8,9 @@ from pydantic import BaseModel, Field, ConfigDict
 class StockBase(BaseModel):
     """Base stock schema."""
 
-    ticker: str = Field(..., min_length=1, max_length=10, description="Stock ticker symbol")
+    ticker: str = Field(
+        ..., min_length=1, max_length=10, description="Stock ticker symbol"
+    )
     name: str = Field(..., min_length=1, max_length=255, description="Company name")
     exchange: str | None = Field(None, max_length=50, description="Stock exchange")
 

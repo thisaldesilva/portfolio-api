@@ -19,7 +19,10 @@ class Customer(Base, TimestampMixin):
 
     # Relationships
     portfolio = relationship(
-        "Portfolio", back_populates="customer", uselist=False, cascade="all, delete-orphan"
+        "Portfolio",
+        back_populates="customer",
+        uselist=False,
+        cascade="all, delete-orphan",
     )
 
     @property

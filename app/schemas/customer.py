@@ -12,7 +12,9 @@ class CustomerBase(BaseModel):
     """Base customer schema."""
 
     name: str = Field(..., min_length=1, max_length=255, description="Customer name")
-    address: str = Field(..., min_length=1, max_length=500, description="Customer address")
+    address: str = Field(
+        ..., min_length=1, max_length=500, description="Customer address"
+    )
 
 
 class CustomerCreate(CustomerBase):

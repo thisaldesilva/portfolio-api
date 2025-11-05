@@ -59,7 +59,9 @@ def health_check():
 async def startup_event():
     """Actions to perform on application startup."""
     print(f"Starting application in {settings.environment} mode...")
-    print(f"API documentation available at: http://{settings.app_host}:{settings.app_port}/docs")
+    print(
+        f"API documentation available at: http://{settings.app_host}:{settings.app_port}/docs"
+    )
 
 
 @app.on_event("shutdown")

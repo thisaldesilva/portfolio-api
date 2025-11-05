@@ -15,7 +15,9 @@ class PortfolioStock(Base, TimestampMixin):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     portfolio_id = Column(
-        UUID(as_uuid=True), ForeignKey("portfolios.id", ondelete="CASCADE"), nullable=False
+        UUID(as_uuid=True),
+        ForeignKey("portfolios.id", ondelete="CASCADE"),
+        nullable=False,
     )
     stock_ticker = Column(
         String(10), ForeignKey("stocks.ticker", ondelete="CASCADE"), nullable=False

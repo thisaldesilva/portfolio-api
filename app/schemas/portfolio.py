@@ -25,8 +25,12 @@ class PortfolioStockResponse(BaseModel):
 class PortfolioReturnRequest(BaseModel):
     """Schema for portfolio return calculation request."""
 
-    start_date: str = Field(..., pattern=r"^\d{4}-\d{2}-\d{2}$", description="Start date (YYYY-MM-DD)")
-    end_date: str = Field(..., pattern=r"^\d{4}-\d{2}-\d{2}$", description="End date (YYYY-MM-DD)")
+    start_date: str = Field(
+        ..., pattern=r"^\d{4}-\d{2}-\d{2}$", description="Start date (YYYY-MM-DD)"
+    )
+    end_date: str = Field(
+        ..., pattern=r"^\d{4}-\d{2}-\d{2}$", description="End date (YYYY-MM-DD)"
+    )
 
 
 class PortfolioReturnResponse(BaseModel):
