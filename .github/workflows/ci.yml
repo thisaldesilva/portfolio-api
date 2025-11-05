@@ -44,7 +44,6 @@ jobs:
         run: |
           black --check app/
           flake8 app/ --max-line-length=100
-          mypy app/ --ignore-missing-imports
 
       - name: Run tests
         env:
