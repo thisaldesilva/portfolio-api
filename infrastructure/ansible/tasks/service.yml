@@ -1,0 +1,33 @@
+---
+# Service management tasks
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+
+- name: Enable portfolio-api service
+  systemd:
+    name: portfolio-api
+    enabled: yes
+
+- name: Restart portfolio-api service
+  systemd:
+    name: portfolio-api
+    state: restarted
+
+- name: Wait for application to be ready
+  wait_for:
+    port: "{{ app_port }}"
+    delay: 5
+    timeout: 60
+
+- name: Check application health
+  uri:
+    url: "http://localhost:{{ app_port }}/health"
+    status_code: 200
+  retries: 3
+  delay: 5
+  register: health_check
+
+- name: Display health check result
+  debug:
+    msg: "Application is healthy: {{ health_check.json }}"

@@ -1,0 +1,72 @@
+---
+# Application deployment tasks
+- name: Ensure application directory exists
+  file:
+    path: "{{ app_dir }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: '0755'
+
+- name: Install system dependencies
+  yum:
+    name:
+      - python3.11
+      - python3.11-pip
+      - git
+      - postgresql15
+      - rsync
+    state: present
+    update_cache: yes
+
+- name: Copy application files from local machine
+  copy:
+    src: ../../../app/
+    dest: "{{ app_dir }}/app/"
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: '0755'
+
+- name: Copy requirements.txt
+  copy:
+    src: ../../../requirements.txt
+    dest: "{{ app_dir }}/requirements.txt"
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+
+- name: Copy alembic files
+  copy:
+    src: ../../../migrations/
+    dest: "{{ app_dir }}/migrations/"
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+
+- name: Copy alembic.ini
+  copy:
+    src: ../../../alembic.ini
+    dest: "{{ app_dir }}/alembic.ini"
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+
+- name: Install Python dependencies
+  pip:
+    requirements: "{{ app_dir }}/requirements.txt"
+    executable: pip3.11
+  become_user: "{{ app_user }}"
+
+- name: Create .env file
+  template:
+    src: templates/env.j2
+    dest: "{{ app_dir }}/.env"
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: '0600'
+
+- name: Create systemd service file
+  template:
+    src: templates/portfolio-api.service.j2
+    dest: /etc/systemd/system/portfolio-api.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Reload systemd

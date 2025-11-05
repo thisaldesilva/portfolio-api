@@ -1,0 +1,25 @@
+---
+# Main deployment playbook
+- name: Deploy Portfolio API
+  hosts: app_servers
+  become: yes
+  vars:
+    app_dir: /opt/portfolio-api
+    app_user: ec2-user
+    repo_url: https://github.com/YOUR_USERNAME/portfolio-api.git
+    branch: main
+
+  handlers:
+    - name: Reload systemd
+      systemd:
+        daemon_reload: yes
+
+  tasks:
+    - name: Include deployment tasks
+      include_tasks: tasks/deploy.yml
+
+    - name: Include database migration tasks
+      include_tasks: tasks/migrate.yml
+
+    - name: Include service management tasks
+      include_tasks: tasks/service.yml

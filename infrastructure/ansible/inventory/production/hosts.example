@@ -1,0 +1,18 @@
+[app_servers]
+portfolio-api-prod ansible_host=YOUR_EC2_PUBLIC_IP
+
+[app_servers:vars]
+ansible_user=ec2-user
+ansible_ssh_private_key_file=~/.ssh/portfolio-api-key.pem
+environment=production
+
+# Database connection (from Terraform outputs)
+db_host=YOUR_RDS_ENDPOINT
+db_port=5432
+db_name=portfolio_db
+db_user=portfolio_admin
+db_password=YOUR_DB_PASSWORD
+
+# Application config
+app_port=8000
+polygon_api_key=YOUR_POLYGON_API_KEY

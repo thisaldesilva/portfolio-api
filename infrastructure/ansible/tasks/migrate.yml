@@ -1,0 +1,22 @@
+---
+# Database migration tasks
+- name: Wait for database to be ready
+  wait_for:
+    host: "{{ db_host }}"
+    port: "{{ db_port }}"
+    timeout: 300
+    state: started
+
+- name: Run Alembic migrations
+  command: alembic upgrade head
+  args:
+    chdir: "{{ app_dir }}"
+  become_user: "{{ app_user }}"
+  environment:
+    DATABASE_URL: "postgresql://{{ db_user }}:{{ db_password }}@{{ db_host }}:{{ db_port }}/{{ db_name }}"
+  register: migration_result
+  changed_when: "'Running upgrade' in migration_result.stdout"
+
+- name: Display migration output
+  debug:
+    var: migration_result.stdout_lines
