@@ -3,7 +3,6 @@
 from typing import List, Optional
 from uuid import UUID
 from sqlalchemy.orm import Session, joinedload
-from fastapi import HTTPException, status
 
 from app.models import Customer, Portfolio, PortfolioStock
 from app.schemas.customer import CustomerCreate, CustomerUpdate

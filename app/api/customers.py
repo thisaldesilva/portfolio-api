@@ -9,7 +9,6 @@ from app.db import get_db
 from app.schemas.customer import (
     CustomerCreate,
     CustomerUpdate,
-    CustomerResponse,
     CustomerWithPortfolio,
 )
 from app.services.customer_service import CustomerService

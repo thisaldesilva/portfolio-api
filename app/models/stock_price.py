@@ -1,7 +1,6 @@
 """Stock price model for historical data."""
 
 import uuid
-from datetime import date
 from sqlalchemy import (
     Column,
     ForeignKey,

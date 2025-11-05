@@ -1,12 +1,12 @@
 """Portfolio service layer."""
 
-from datetime import datetime, date
-from typing import Dict, List
+from datetime import date
+from typing import Dict
 from uuid import UUID
 from decimal import Decimal
 from sqlalchemy.orm import Session
 
-from app.models import Customer, PortfolioStock
+from app.models import Customer
 from app.services.stock_service import StockService
 
 

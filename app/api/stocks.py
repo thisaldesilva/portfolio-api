@@ -1,6 +1,5 @@
 """Stock API endpoints."""
 
-from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from sqlalchemy.orm import Session
 

@@ -12,7 +12,10 @@ settings = get_settings()
 # Create FastAPI app
 app = FastAPI(
     title="Customer Portfolio Management API",
-    description="Production-grade REST API for managing customer portfolios with real-time stock data",
+    description=(
+        "Production-grade REST API for managing customer "
+        "portfolios with real-time stock data"
+    ),
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",

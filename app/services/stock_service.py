@@ -1,7 +1,7 @@
 """Stock service layer."""
 
 from datetime import datetime, timedelta, date
-from typing import List, Optional
+from typing import List
 from decimal import Decimal
 import httpx
 from sqlalchemy.orm import Session
