@@ -6,9 +6,18 @@ resource "aws_security_group" "app" {
   description = "Security group for application EC2 instances"
   vpc_id      = var.vpc_id
 
-  # HTTP access
+  # HTTP access for nginx
   ingress {
     description = "HTTP from anywhere"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # API access
+  ingress {
+    description = "API from anywhere"
     from_port   = 8000
     to_port     = 8000
     protocol    = "tcp"

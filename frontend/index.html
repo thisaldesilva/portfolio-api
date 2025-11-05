@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .nav-btn {
+            background: #f5f5f5;
+            color: #333;
+            border: 1px solid #ddd;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            background: #e8e8e8;
+        }
+
+        .nav-btn.active {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h2 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: #0056b3;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .customer-card {
+            background: #fafafa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            border: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .customer-card:hover {
+            background: #f0f0f0;
+        }
+
+        .customer-card h3 {
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .customer-card p {
+            color: #666;
+            font-size: 13px;
+            margin: 3px 0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+        }
+
+        .error {
+            background: #fff3cd;
+            color: #856404;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            border: 1px solid #ffeaa7;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            border: 1px solid #c3e6cb;
+        }
+
+        .stock-badge {
+            display: inline-block;
+            background: #e9ecef;
+            color: #495057;
+            padding: 4px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+        .returns-summary {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            border: 1px solid #dee2e6;
+        }
+
+        .returns-summary h3 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .stat-value {
+            color: #333;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .holding-card {
+            background: #fff;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .holding-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .holding-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .holding-return {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .positive {
+            color: #28a745;
+        }
+
+        .negative {
+            color: #dc3545;
+        }
+
+        .holding-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .stocks-input {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+
+        .stock-entry {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .stock-entry input {
+            flex: 1;
+        }
+
+        .stock-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .nav {
+                flex-direction: column;
+            }
+
+            .nav-btn {
+                width: 100%;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Portfolio Management</h1>
+        </div>
+
+        <div class="nav">
+            <button class="nav-btn active" onclick="showSection('customers')">Customers</button>
+            <button class="nav-btn" onclick="showSection('create-customer')">New Customer</button>
+            <button class="nav-btn" onclick="showSection('stocks')">Stocks</button>
+            <button class="nav-btn" onclick="showSection('returns')">Returns</button>
+        </div>
+
+        <div class="content">
+            <!-- Customers Section -->
+            <div id="customers-section" class="section active">
+                <h2>Customers</h2>
+                <div id="customers-list" class="loading">Loading customers...</div>
+            </div>
+
+            <!-- Create Customer Section -->
+            <div id="create-customer-section" class="section">
+                <h2>Create New Customer</h2>
+                <div id="create-message"></div>
+                <form id="create-customer-form">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" id="customer-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <textarea id="customer-address" rows="3" required></textarea>
+                    </div>
+                    <div class="stocks-input">
+                        <label><strong>Add Stocks (Optional)</strong></label>
+                        <div class="stock-entry">
+                            <input type="text" id="stock-ticker" placeholder="Ticker" style="text-transform: uppercase">
+                            <input type="number" id="stock-quantity" placeholder="Quantity" min="1">
+                            <button type="button" class="btn btn-secondary" onclick="addStock()">Add</button>
+                        </div>
+                        <div id="stocks-list" class="stock-list"></div>
+                    </div>
+                    <button type="submit" class="btn">Create Customer</button>
+                </form>
+            </div>
+
+            <!-- Stocks Section -->
+            <div id="stocks-section" class="section">
+                <h2>Stock Management</h2>
+                <div id="stocks-message"></div>
+                <div class="form-group">
+                    <label>Populate Stock Data</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="populate-ticker" placeholder="Ticker (e.g., AAPL)" style="flex: 1; text-transform: uppercase">
+                        <button class="btn" onclick="populateStock()">Populate</button>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" onclick="populateFortune500()" style="margin-top: 10px;">Populate Fortune 500</button>
+            </div>
+
+            <!-- Portfolio Returns Section -->
+            <div id="returns-section" class="section">
+                <h2>Portfolio Returns</h2>
+                <div id="returns-message"></div>
+                <div class="form-group">
+                    <label>Customer ID</label>
+                    <input type="text" id="returns-customer-id" placeholder="Enter customer UUID">
+                </div>
+                <div class="grid">
+                    <div class="form-group">
+                        <label>Start Date</label>
+                        <input type="date" id="returns-start-date">
+                    </div>
+                    <div class="form-group">
+                        <label>End Date</label>
+                        <input type="date" id="returns-end-date">
+                    </div>
+                </div>
+                <button class="btn" onclick="calculateReturns()">Calculate Returns</button>
+                <div id="returns-display"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/api/v1';
+        let selectedStocks = [];
+
+        function showSection(sectionName) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`${sectionName}-section`).classList.add('active');
+            event.target.classList.add('active');
+            if (sectionName === 'customers') loadCustomers();
+        }
+
+        async function loadCustomers() {
+            const listDiv = document.getElementById('customers-list');
+            listDiv.innerHTML = '<div class="loading">Loading customers...</div>';
+
+            try {
+                const response = await fetch(`${API_URL}/customers/`);
+                const customers = await response.json();
+
+                if (customers.length === 0) {
+                    listDiv.innerHTML = '<p>No customers found.</p>';
+                    return;
+                }
+
+                listDiv.innerHTML = customers.map(customer => `
+                    <div class="customer-card" onclick="viewCustomer('${customer.id}')">
+                        <h3>${customer.name}</h3>
+                        <p>${customer.address}</p>
+                        <p style="font-size: 12px; color: #999;">ID: ${customer.id}</p>
+                        <div style="margin-top: 8px;">
+                            ${customer.portfolio_stocks.map(stock =>
+                                `<span class="stock-badge">${stock.stock_ticker}: ${stock.quantity}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                listDiv.innerHTML = `<div class="error">Error loading customers: ${error.message}</div>`;
+            }
+        }
+
+        function viewCustomer(id) {
+            document.getElementById('returns-customer-id').value = id;
+            showSection('returns');
+            document.querySelectorAll('.nav-btn')[3].classList.add('active');
+        }
+
+        function addStock() {
+            const ticker = document.getElementById('stock-ticker').value.toUpperCase().trim();
+            const quantity = parseInt(document.getElementById('stock-quantity').value);
+
+            if (!ticker || !quantity || quantity < 1) {
+                alert('Please enter valid ticker and quantity');
+                return;
+            }
+
+            selectedStocks.push({ ticker, quantity });
+            updateStocksList();
+
+            document.getElementById('stock-ticker').value = '';
+            document.getElementById('stock-quantity').value = '';
+        }
+
+        function removeStock(index) {
+            selectedStocks.splice(index, 1);
+            updateStocksList();
+        }
+
+        function updateStocksList() {
+            const listDiv = document.getElementById('stocks-list');
+            listDiv.innerHTML = selectedStocks.map((stock, index) => `
+                <span class="stock-badge">
+                    ${stock.ticker}: ${stock.quantity}
+                    <span style="cursor: pointer; margin-left: 5px;" onclick="removeStock(${index})">×</span>
+                </span>
+            `).join('');
+        }
+
+        document.getElementById('create-customer-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const messageDiv = document.getElementById('create-message');
+            messageDiv.innerHTML = '<div class="loading">Creating customer...</div>';
+
+            const customerData = {
+                name: document.getElementById('customer-name').value,
+                address: document.getElementById('customer-address').value,
+                stocks: selectedStocks.length > 0 ? selectedStocks : undefined
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/customers/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(customerData)
+                });
+
+                const customer = await response.json();
+
+                messageDiv.innerHTML = `
+                    <div class="success">
+                        Customer created successfully!<br>
+                        ID: ${customer.id}
+                    </div>
+                `;
+
+                document.getElementById('create-customer-form').reset();
+                selectedStocks = [];
+                updateStocksList();
+                loadCustomers();
+            } catch (error) {
+                messageDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            }
+        });
+
+        async function populateStock() {
+            const ticker = document.getElementById('populate-ticker').value.toUpperCase().trim();
+            const messageDiv = document.getElementById('stocks-message');
+
+            if (!ticker) {
+                messageDiv.innerHTML = '<div class="error">Please enter a ticker symbol</div>';
+                return;
+            }
+
+            messageDiv.innerHTML = '<div class="loading">Populating stock data...</div>';
+
+            try {
+                const response = await fetch(`${API_URL}/stocks/populate/${ticker}`, {
+                    method: 'POST'
+                });
+                const stock = await response.json();
+
+                messageDiv.innerHTML = `<div class="success">Stock ${stock.ticker} populated successfully!</div>`;
+                document.getElementById('populate-ticker').value = '';
+            } catch (error) {
+                messageDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function populateFortune500() {
+            const messageDiv = document.getElementById('stocks-message');
+            messageDiv.innerHTML = '<div class="loading">Starting Fortune 500 population...</div>';
+
+            try {
+                const response = await fetch(`${API_URL}/stocks/populate-fortune500`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+
+                messageDiv.innerHTML = `<div class="success">${result.message}</div>`;
+            } catch (error) {
+                messageDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function calculateReturns() {
+            const customerId = document.getElementById('returns-customer-id').value.trim();
+            const startDate = document.getElementById('returns-start-date').value;
+            const endDate = document.getElementById('returns-end-date').value;
+            const messageDiv = document.getElementById('returns-message');
+            const displayDiv = document.getElementById('returns-display');
+
+            if (!customerId || !startDate || !endDate) {
+                messageDiv.innerHTML = '<div class="error">Please fill in all fields</div>';
+                return;
+            }
+
+            messageDiv.innerHTML = '<div class="loading">Calculating returns...</div>';
+            displayDiv.innerHTML = '';
+
+            try {
+                const response = await fetch(`${API_URL}/portfolio/${customerId}/returns?start_date=${startDate}&end_date=${endDate}`);
+                const returns = await response.json();
+
+                messageDiv.innerHTML = '';
+
+                const returnClass = returns.total_return >= 0 ? 'positive' : 'negative';
+
+                displayDiv.innerHTML = `
+                    <div class="returns-summary">
+                        <h3>Portfolio Summary</h3>
+                        <div class="stat-row">
+                            <span class="stat-label">Total Return</span>
+                            <span class="stat-value ${returnClass}">$${returns.total_return.toFixed(2)}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Return Percentage</span>
+                            <span class="stat-value ${returnClass}">${returns.return_percentage.toFixed(2)}%</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Period</span>
+                            <span class="stat-value">${returns.start_date} to ${returns.end_date}</span>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top: 20px; margin-bottom: 15px; font-size: 16px;">Holdings</h3>
+                    ${returns.holdings.map(holding => {
+                        const holdingClass = holding.return >= 0 ? 'positive' : 'negative';
+                        return `
+                            <div class="holding-card">
+                                <div class="holding-header">
+                                    <span class="holding-title">${holding.ticker} (${holding.quantity} shares)</span>
+                                    <span class="holding-return ${holdingClass}">
+                                        $${holding.return.toFixed(2)} (${holding.return_percentage.toFixed(2)}%)
+                                    </span>
+                                </div>
+                                <div class="holding-details">
+                                    <div>Start Price: $${holding.start_price.toFixed(2)}</div>
+                                    <div>End Price: $${holding.end_price.toFixed(2)}</div>
+                                    <div>Start Value: $${holding.start_value.toFixed(2)}</div>
+                                    <div>End Value: $${holding.end_value.toFixed(2)}</div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                `;
+            } catch (error) {
+                messageDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            }
+        }
+
+        // Set default dates
+        const today = new Date();
+        const twoWeeksAgo = new Date(today.getTime() - 14 * 24 * 60 * 60 * 1000);
+        document.getElementById('returns-end-date').valueAsDate = today;
+        document.getElementById('returns-start-date').valueAsDate = twoWeeksAgo;
+
+        // Load customers on page load
+        loadCustomers();
+    </script>
+</body>
+</html>
