@@ -1,0 +1,265 @@
+<div class="container">
+  <div class="header">
+    <h1>Portfolio Management</h1>
+  </div>
+
+  <div class="nav">
+    <button
+      class="nav-btn"
+      [class.active]="activeSection === 'customers'"
+      (click)="showSection('customers')">
+      Customers
+    </button>
+    <button
+      class="nav-btn"
+      [class.active]="activeSection === 'create-customer'"
+      (click)="showSection('create-customer')">
+      New Customer
+    </button>
+    <button
+      class="nav-btn"
+      [class.active]="activeSection === 'stocks'"
+      (click)="showSection('stocks')">
+      Stocks
+    </button>
+    <button
+      class="nav-btn"
+      [class.active]="activeSection === 'returns'"
+      (click)="showSection('returns')">
+      Returns
+    </button>
+  </div>
+
+  <div class="content">
+    <!-- Customers Section -->
+    <div class="section" [class.active]="activeSection === 'customers'">
+      <h2>Customers</h2>
+
+      <div *ngIf="customersLoading" class="loading">Loading customers...</div>
+
+      <div *ngIf="customersError" class="error">{{ customersError }}</div>
+
+      <div *ngIf="!customersLoading && !customersError">
+        <p *ngIf="customers.length === 0">No customers found.</p>
+
+        <div
+          *ngFor="let customer of customers"
+          class="customer-card"
+          (click)="viewCustomer(customer.id)">
+          <h3>{{ customer.name }}</h3>
+          <p>{{ customer.address }}</p>
+          <p style="font-size: 12px; color: #999;">ID: {{ customer.id }}</p>
+          <div style="margin-top: 8px;">
+            <span
+              *ngFor="let stock of customer.portfolio_stocks"
+              class="stock-badge">
+              {{ stock.stock_ticker }}: {{ stock.quantity }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create Customer Section -->
+    <div class="section" [class.active]="activeSection === 'create-customer'">
+      <h2>Create New Customer</h2>
+
+      <div *ngIf="createMessage" [class]="createMessageType">
+        {{ createMessage }}
+      </div>
+
+      <form (ngSubmit)="createCustomer()">
+        <div class="form-group">
+          <label>Name</label>
+          <input
+            type="text"
+            [(ngModel)]="customerName"
+            name="customerName"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label>Address</label>
+          <textarea
+            [(ngModel)]="customerAddress"
+            name="customerAddress"
+            rows="3"
+            required>
+          </textarea>
+        </div>
+
+        <div class="stocks-input">
+          <label><strong>Add Stocks (Optional)</strong></label>
+          <div class="stock-entry">
+            <input
+              type="text"
+              [(ngModel)]="stockTicker"
+              name="stockTicker"
+              placeholder="Ticker"
+              style="text-transform: uppercase">
+            <input
+              type="number"
+              [(ngModel)]="stockQuantity"
+              name="stockQuantity"
+              placeholder="Quantity"
+              min="1">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="addStock()">
+              Add
+            </button>
+          </div>
+
+          <div class="stock-list">
+            <span
+              *ngFor="let stock of selectedStocks; let i = index"
+              class="stock-badge">
+              {{ stock.ticker }}: {{ stock.quantity }}
+              <span
+                style="cursor: pointer; margin-left: 5px;"
+                (click)="removeStock(i)">
+                ×
+              </span>
+            </span>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          class="btn"
+          [disabled]="createLoading">
+          {{ createLoading ? 'Creating...' : 'Create Customer' }}
+        </button>
+      </form>
+    </div>
+
+    <!-- Stocks Section -->
+    <div class="section" [class.active]="activeSection === 'stocks'">
+      <h2>Stock Management</h2>
+
+      <div *ngIf="stocksMessage" [class]="stocksMessageType">
+        {{ stocksMessage }}
+      </div>
+
+      <div class="form-group">
+        <label>Populate Stock Data</label>
+        <div style="display: flex; gap: 10px;">
+          <input
+            type="text"
+            [(ngModel)]="populateTicker"
+            name="populateTicker"
+            placeholder="Ticker (e.g., AAPL)"
+            style="flex: 1; text-transform: uppercase">
+          <button
+            class="btn"
+            (click)="populateStock()"
+            [disabled]="stocksLoading">
+            {{ stocksLoading ? 'Populating...' : 'Populate' }}
+          </button>
+        </div>
+      </div>
+
+      <button
+        class="btn btn-secondary"
+        (click)="populateFortune500()"
+        style="margin-top: 10px;"
+        [disabled]="stocksLoading">
+        {{ stocksLoading ? 'Populating...' : 'Populate Fortune 500' }}
+      </button>
+    </div>
+
+    <!-- Portfolio Returns Section -->
+    <div class="section" [class.active]="activeSection === 'returns'">
+      <h2>Portfolio Returns</h2>
+
+      <div *ngIf="returnsMessage" [class]="returnsMessageType">
+        {{ returnsMessage }}
+      </div>
+
+      <div class="form-group">
+        <label>Customer ID</label>
+        <input
+          type="text"
+          [(ngModel)]="returnsCustomerId"
+          name="returnsCustomerId"
+          placeholder="Enter customer UUID">
+      </div>
+
+      <div class="grid">
+        <div class="form-group">
+          <label>Start Date</label>
+          <input
+            type="date"
+            [(ngModel)]="returnsStartDate"
+            name="returnsStartDate">
+        </div>
+        <div class="form-group">
+          <label>End Date</label>
+          <input
+            type="date"
+            [(ngModel)]="returnsEndDate"
+            name="returnsEndDate">
+        </div>
+      </div>
+
+      <button
+        class="btn"
+        (click)="calculateReturns()"
+        [disabled]="returnsLoading">
+        {{ returnsLoading ? 'Calculating...' : 'Calculate Returns' }}
+      </button>
+
+      <div *ngIf="portfolioReturns">
+        <div class="returns-summary">
+          <h3>Portfolio Summary</h3>
+          <div class="stat-row">
+            <span class="stat-label">Total Return</span>
+            <span
+              class="stat-value"
+              [class.positive]="isPositive(portfolioReturns.total_return)"
+              [class.negative]="!isPositive(portfolioReturns.total_return)">
+              ${{ formatNumber(portfolioReturns.total_return) }}
+            </span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Return Percentage</span>
+            <span
+              class="stat-value"
+              [class.positive]="isPositive(portfolioReturns.return_percentage)"
+              [class.negative]="!isPositive(portfolioReturns.return_percentage)">
+              {{ formatNumber(portfolioReturns.return_percentage) }}%
+            </span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Period</span>
+            <span class="stat-value">
+              {{ portfolioReturns.start_date }} to {{ portfolioReturns.end_date }}
+            </span>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 20px; margin-bottom: 15px; font-size: 16px;">Holdings</h3>
+        <div *ngFor="let holding of portfolioReturns.holdings" class="holding-card">
+          <div class="holding-header">
+            <span class="holding-title">
+              {{ holding.ticker }} ({{ holding.quantity }} shares)
+            </span>
+            <span
+              class="holding-return"
+              [class.positive]="isPositive(holding.return)"
+              [class.negative]="!isPositive(holding.return)">
+              ${{ formatNumber(holding.return) }} ({{ formatNumber(holding.return_percentage) }}%)
+            </span>
+          </div>
+          <div class="holding-details">
+            <div>Start Price: ${{ formatNumber(holding.start_price) }}</div>
+            <div>End Price: ${{ formatNumber(holding.end_price) }}</div>
+            <div>Start Value: ${{ formatNumber(holding.start_value) }}</div>
+            <div>End Value: ${{ formatNumber(holding.end_value) }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

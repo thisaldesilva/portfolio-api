@@ -5,6 +5,39 @@
     name: nginx
     state: present
 
+- name: Install Node.js 20
+  shell: |
+    curl -fsSL https://rpm.nodesource.com/setup_20.x | bash -
+    yum install -y nodejs
+  args:
+    creates: /usr/bin/node
+
+- name: Create frontend build directory
+  file:
+    path: /tmp/frontend-build
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+
+- name: Copy frontend source files
+  copy:
+    src: ../../../frontend/
+    dest: /tmp/frontend-build/
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+
+- name: Install frontend dependencies
+  shell: npm install
+  args:
+    chdir: /tmp/frontend-build
+  become_user: "{{ app_user }}"
+
+- name: Build Angular application
+  shell: npm run build
+  args:
+    chdir: /tmp/frontend-build
+  become_user: "{{ app_user }}"
+
 - name: Ensure web root directory exists
   file:
     path: /var/www/portfolio-app
@@ -13,13 +46,18 @@
     group: nginx
     mode: '0755'
 
-- name: Copy frontend files
-  copy:
-    src: ../../../frontend/
-    dest: /var/www/portfolio-app/
-    owner: nginx
-    group: nginx
-    mode: '0644'
+- name: Copy built files to web root
+  shell: |
+    rm -rf /var/www/portfolio-app/*
+    cp -r /tmp/frontend-build/dist/portfolio-app/browser/* /var/www/portfolio-app/
+    chown -R nginx:nginx /var/www/portfolio-app/
+  args:
+    warn: false
+
+- name: Clean up build directory
+  file:
+    path: /tmp/frontend-build
+    state: absent
 
 - name: Copy nginx configuration
   template:

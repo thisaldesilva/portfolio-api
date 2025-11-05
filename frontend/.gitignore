@@ -1,0 +1,18 @@
+# Node
+node_modules/
+npm-debug.log
+package-lock.json
+
+# Angular
+dist/
+.angular/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
